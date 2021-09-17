@@ -5,39 +5,35 @@ namespace Isu.Models
 {
     public class Group
     {
-        private List<Student> _students = new List<Student>();
-        private int _courseNumber;
-        private string _name;
         public Group(string name)
         {
-            _name = name;
-            _courseNumber = Convert.ToInt32(name[2]) - 48;
+            Name = name;
+            CourseNumber = Convert.ToInt32(name[2]) - 48;
+            Students = new List<Student>();
             if (IsNameOfGroupValid(name))
             {
                 throw new IsuException("Invalid name of group");
             }
         }
 
-        public List<Student> Students => _students;
-
-        public int CourseNumber => _courseNumber;
-
-        public string Name => _name;
+        public List<Student> Students { get; }
+        public string Name { get; }
+        public int CourseNumber { get; }
 
         public Student GetStudent(int id)
         {
-            return _students.Find(x => x.Id == id);
+            return Students.Find(x => x.Id == id);
         }
 
         public Student FindStudent(string name)
         {
-            return _students.Find(x => x.Name == name);
+            return Students.Find(x => x.Name == name);
         }
 
         public void AddStudent(Student newStudent)
         {
-            _students.Add(newStudent);
-            if (_students.Count > 27)
+            Students.Add(newStudent);
+            if (Students.Count > 27)
             {
                 throw new IsuException("Reach max student per group");
             }
@@ -45,7 +41,7 @@ namespace Isu.Models
 
         public void DeleteStudent(Student deletableStudent)
         {
-            _students.Remove(deletableStudent);
+            Students.Remove(deletableStudent);
         }
 
         private bool IsNameOfGroupValid(string name)
