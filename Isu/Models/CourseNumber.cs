@@ -2,13 +2,11 @@
 {
     public class CourseNumber
     {
-        private int _course;
-
         public CourseNumber(int course)
         {
-            _course = course;
+            Course = course;
         }
 
-        public int Course => _course;
+        public int Course { get; }
     }
 }
