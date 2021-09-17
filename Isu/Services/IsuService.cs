@@ -58,8 +58,7 @@ namespace Isu.Services
 
         public List<Group> FindGroups(CourseNumber courseNumber)
         {
-            int numberOfCourse = courseNumber.Course;
-            return _allGroups.FindAll(x => x.CourseNumber == numberOfCourse);
+            return _allGroups.FindAll(x => x.CourseNumber == courseNumber.Course);
         }
 
         public void ChangeStudentGroup(Student student, Group newGroup)

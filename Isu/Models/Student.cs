@@ -7,11 +7,11 @@
         private Group _group;
         private int _id;
 
-        public Student(string name, Group @group)
+        public Student(string name, Group group)
         {
             _id = _globalId++;
             _name = name;
-            _group = @group;
+            _group = group;
         }
 
         public string Name => _name;
