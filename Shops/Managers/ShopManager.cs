@@ -32,17 +32,25 @@ namespace Shops.Managers
             }
         }
 
-        public Shop FindShop(List<PersonProductInfo> productInfos)
+        public Shop FindShop(List<PersonProductInfo> productInfo)
         {
             Shop cheapest = null;
             int minCost = int.MaxValue;
             foreach (Shop shop in _shops)
             {
-                if (minCost > shop.TryToBuy(productInfos))
+                if (shop.CanBuy(productInfo))
                 {
-                    minCost = shop.TryToBuy(productInfos);
-                    cheapest = shop;
+                    if (shop.GetCostOfProducts(productInfo) < minCost)
+                    {
+                        minCost = shop.GetCostOfProducts(productInfo);
+                        cheapest = shop;
+                    }
                 }
+            }
+
+            if (cheapest == null)
+            {
+                throw new ShopException("Required shop does not exist");
             }
 
             return cheapest;
