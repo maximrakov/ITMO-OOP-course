@@ -9,43 +9,48 @@ namespace Shops.Models
     public class Shop
     {
         private static int globalID;
-        private List<ShopProductInfo> products;
+        private List<ShopProductInfo> _products;
 
         public Shop(int balance, string name, string adress)
         {
             Id = globalID++;
             Name = name;
             Adress = adress;
-            products = new List<ShopProductInfo>();
-            Balance = balance;
+            _products = new List<ShopProductInfo>();
+            Balance = new Balance(balance);
         }
 
-        public int Balance { get; set; }
+        public Balance Balance { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
         public string Adress { get; set; }
 
-        public List<ShopProductInfo> F()
+        public bool CanBuy(List<PersonProductInfo> personProductInfo)
         {
-            return products;
+            foreach (PersonProductInfo personProduct in personProductInfo)
+            {
+                foreach (ShopProductInfo shopProduct in _products)
+                {
+                    if (shopProduct.Product.Name == personProduct.Product.Name && shopProduct.Count < personProduct.Count)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
-        public int TakeSomeProducts(PersonProductInfo productInfo, bool take)
+        public int GetCostOfProducts(List<PersonProductInfo> personProductInfo)
         {
             int cost = 0;
-            foreach (ShopProductInfo shopProductInfo in products)
+            foreach (PersonProductInfo personProduct in personProductInfo)
             {
-                if (shopProductInfo.Product.Name == productInfo.Product.Name)
+                foreach (ShopProductInfo shopProduct in _products)
                 {
-                    if (shopProductInfo.Count < productInfo.Count)
+                    if (shopProduct.Product.Name == personProduct.Product.Name)
                     {
-                        throw new ShopException("Shop does not have required amount of product");
-                    }
-
-                    cost += productInfo.Count * shopProductInfo.Cost;
-                    if (take)
-                    {
-                        shopProductInfo.Count -= productInfo.Count;
+                        cost += shopProduct.Cost * personProduct.Count;
                     }
                 }
             }
@@ -53,41 +58,35 @@ namespace Shops.Models
             return cost;
         }
 
-        public void BuyProducts(Person person, List<PersonProductInfo> productInfo)
+        public void RemoveSoldStuff(List<PersonProductInfo> personProductInfo)
         {
-            int cost = 0;
-            foreach (PersonProductInfo personProductInfo in productInfo)
+            foreach (PersonProductInfo personProduct in personProductInfo)
             {
-                cost += TakeSomeProducts(personProductInfo, true);
+                foreach (ShopProductInfo shopProduct in _products)
+                {
+                    if (shopProduct.Product.Name == personProduct.Product.Name && shopProduct.Count < personProduct.Count)
+                    {
+                        shopProduct.Count -= personProduct.Count;
+                    }
+                }
             }
-
-            if (person.Balance - cost < 0)
-            {
-                throw new ShopException("Person does not have money");
-            }
-
-            foreach (PersonProductInfo personProductInfo in productInfo)
-            {
-                person.Products.Add(personProductInfo);
-            }
-
-            person.Balance -= cost;
         }
 
-        public int TryToBuy(List<PersonProductInfo> productInfo)
+        public int MakePurchase(List<PersonProductInfo> personProductInfo)
         {
-            int cost = 0;
-            foreach (PersonProductInfo personProductInfo in productInfo)
+            if (!CanBuy(personProductInfo))
             {
-                cost += TakeSomeProducts(personProductInfo, false);
+                throw new ShopException("Shop does not have required amount of product");
             }
 
-            return cost;
+            RemoveSoldStuff(personProductInfo);
+            Balance.Receive(GetCostOfProducts(personProductInfo));
+            return GetCostOfProducts(personProductInfo);
         }
 
         public void AddProducts(ShopProductInfo newProducts)
         {
-            foreach (ShopProductInfo curProducts in products)
+            foreach (ShopProductInfo curProducts in _products)
             {
                 if (curProducts.Product.Name == newProducts.Product.Name)
                 {
@@ -97,7 +96,7 @@ namespace Shops.Models
                 }
             }
 
-            products.Add(newProducts);
+            _products.Add(newProducts);
         }
 
         public void ChangeCost(Product product, int newCost)
@@ -107,7 +106,7 @@ namespace Shops.Models
                 throw new ArgumentNullException(nameof(product));
             }
 
-            foreach (ShopProductInfo productInfo in products)
+            foreach (ShopProductInfo productInfo in _products)
             {
                 productInfo.Cost = newCost;
             }

@@ -33,7 +33,7 @@ namespace Shops.Tests
             var listOfPersonProduct = new List<PersonProductInfo>();
             listOfPersonProduct.Add(new PersonProductInfo(bread, 1));
             var person = new Person(1000,"Ivan");
-            shop.BuyProducts(person, listOfPersonProduct);
+            person.BuyProducts(shop, listOfPersonProduct);
             Assert.AreEqual(listOfProduct[0].Product.Name, person.Products[0].Product.Name);
         }
         [Test]
@@ -52,10 +52,10 @@ namespace Shops.Tests
             listOfPersonProduct.Add(new PersonProductInfo(bread, 1));
             var person = new Person(1000, "Ivan");
             var person2 = new Person(1000, "Vasiliy");
-            shop.BuyProducts(person, listOfPersonProduct);
+            person.BuyProducts(shop, listOfPersonProduct);
             shop.ChangeCost(bread, 50);
-            shop.BuyProducts(person2, listOfPersonProduct);
-            Assert.AreEqual(person2.Balance - person.Balance, 50);
+            person2.BuyProducts(shop, listOfPersonProduct);
+            Assert.AreEqual(50, person2.Balance.Money - person.Balance.Money);
         }
         [Test]
         public void FindShopWithLowestPrice()
@@ -94,8 +94,8 @@ namespace Shops.Tests
             Shop shopWithLowestCost2 = _shopManager.FindShop(listOfPersonProduct);
 
             var person = new Person(1000, "Ivan");
-            shopWithLowestCost2.BuyProducts(person, listOfPersonProduct);
-            Assert.AreEqual(person.Balance, 920);
+            person.BuyProducts(shopWithLowestCost2, listOfPersonProduct);
+            Assert.AreEqual(person.Balance.Money, 920);
         }
         [Test]
         public void BuySomepProducts()
@@ -122,15 +122,14 @@ namespace Shops.Tests
             listOfPersonProduct.Add(new PersonProductInfo(bread,2));
             listOfPersonProduct.Add(new PersonProductInfo(milk, 2));
 
-            Person p = new Person(100, "Ivan");
+            var person = new Person(100, "Ivan");
             
             Assert.Catch<ShopException>(() =>
             {
-                shop.BuyProducts(p, listOfPersonProduct);
+                person.BuyProducts(shop, listOfPersonProduct);
             });
-
-            shop2.BuyProducts(p, listOfPersonProduct);
-            Assert.AreEqual(p.Balance, 100 - 2 * 10 - 2 * 30);
+            person.BuyProducts(shop2, listOfPersonProduct);
+            Assert.AreEqual(person.Balance.Money, 100 - 2 * 10 - 2 * 30);
         }
     }
 }
