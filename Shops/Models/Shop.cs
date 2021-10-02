@@ -25,7 +25,7 @@ namespace Shops.Models
         public string Name { get; set; }
         public string Adress { get; set; }
 
-        public bool CanBuy(List<PersonProductInfo> personProductInfo)
+        public bool IsBuyPossible(List<PersonProductInfo> personProductInfo)
         {
             foreach (PersonProductInfo personProduct in personProductInfo)
             {
@@ -44,6 +44,11 @@ namespace Shops.Models
         public int GetCostOfProducts(List<PersonProductInfo> personProductInfo)
         {
             int cost = 0;
+            if (!IsBuyPossible(personProductInfo))
+            {
+                throw new ShopException("Shop does not required");
+            }
+
             foreach (PersonProductInfo personProduct in personProductInfo)
             {
                 foreach (ShopProductInfo shopProduct in _products)
@@ -74,7 +79,7 @@ namespace Shops.Models
 
         public int MakePurchase(List<PersonProductInfo> personProductInfo)
         {
-            if (!CanBuy(personProductInfo))
+            if (!IsBuyPossible(personProductInfo))
             {
                 throw new ShopException("Shop does not have required amount of product");
             }
