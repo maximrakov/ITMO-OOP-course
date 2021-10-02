@@ -38,7 +38,7 @@ namespace Shops.Managers
             int minCost = int.MaxValue;
             foreach (Shop shop in _shops)
             {
-                if (shop.CanBuy(productInfo))
+                if (shop.IsBuyPossible(productInfo))
                 {
                     if (shop.GetCostOfProducts(productInfo) < minCost)
                     {
