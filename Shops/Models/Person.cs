@@ -13,8 +13,10 @@ namespace Shops.Models
 
         public void BuyProducts(Shop shop, List<PersonProductInfo> personProduct)
         {
-            int cost = shop.MakePurchase(personProduct);
+            int cost = shop.GetCostOfProducts(personProduct);
             Balance.Spend(cost);
+            shop.MakePurchase(personProduct);
+
             foreach (PersonProductInfo productInfo in personProduct)
             {
                 Products.Add(productInfo);
