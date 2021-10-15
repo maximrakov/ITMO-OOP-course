@@ -3,9 +3,9 @@ using Isu.Models;
 
 namespace IsuExtra.OGNPStuff
 {
-    public class Class
+    public class Employment
     {
-        public Class(Group group, string time, string auditory, string teacher)
+        public Employment(Group group, string time, string auditory, string teacher)
         {
             if (group is null)
             {
@@ -28,9 +28,9 @@ namespace IsuExtra.OGNPStuff
             Group = group;
         }
 
-        public bool HasIntersection(Class anotherClass)
+        public bool HasIntersection(Employment anotherEmploy)
         {
-            return anotherClass.Time == Time;
+            return anotherEmploy.Time == Time;
         }
 
         public string Time { get; set; }
