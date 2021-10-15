@@ -6,13 +6,13 @@ namespace IsuExtra.OGNPStuff
 {
     public class Flow
     {
-        private List<Class> classes;
+        private List<Employment> classes;
         public int FreePlaces { get; set; }
         public Group Group { get; set; }
         public Flow(string groupName, int freePlaces)
         {
             Group = new Group(groupName);
-            classes = new List<Class>();
+            classes = new List<Employment>();
             FreePlaces = freePlaces;
         }
 
@@ -57,14 +57,14 @@ namespace IsuExtra.OGNPStuff
                 throw new ArgumentNullException(nameof(auditory));
             }
 
-            classes.Add(new Class(Group, time, teacher, auditory));
+            classes.Add(new Employment(Group, time, teacher, auditory));
         }
 
         public bool HasIntersection(Flow anotherFlow)
         {
-            foreach (Class curClass in classes)
+            foreach (Employment curClass in classes)
             {
-                foreach (Class anothClass in anotherFlow.classes)
+                foreach (Employment anothClass in anotherFlow.classes)
                 {
                     if (curClass.HasIntersection(anothClass))
                     {
