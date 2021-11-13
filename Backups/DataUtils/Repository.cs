@@ -12,6 +12,7 @@ namespace Backups.DataUtils
         public string Way { get; set; }
         public Repository(string storageWay, List<ObjectFile> objects)
         {
+            Way = @"labb";
             if (storageWay is null)
             {
                 throw new ArgumentNullException(nameof(storageWay));
@@ -24,7 +25,7 @@ namespace Backups.DataUtils
 
             if (storageWay == "single")
             {
-                using (StreamWriter sw = File.CreateText(@"d:\labb\wtmp\tmptxt.txt"))
+                using (StreamWriter sw = File.CreateText(@"d:\" + Way + @"\wtmp\tmptxt.txt"))
                 {
                     foreach (ObjectFile objectFile in objects)
                     {
@@ -38,7 +39,7 @@ namespace Backups.DataUtils
 
             if (storageWay == "split")
             {
-                string zipPath = @"d:\labb\wtmp\res\result" + objects[0].Info + ".zip";
+                string zipPath = @"d:\" + Way + @"\wtmp\res\result" + objects[0].Info + ".zip";
                 foreach (ObjectFile objectFile in objects)
                 {
                     using (StreamWriter sw = File.CreateText(@"d:\labb\wtmp\tmptxt.txt"))
@@ -46,7 +47,7 @@ namespace Backups.DataUtils
                         sw.WriteLine(objectFile.Info);
                     }
 
-                    zipPath = @"d:\labb\res\result" + RandomString(10) + objectFile.Info + ".zip";
+                    zipPath = @"d:\" + Way + @"\res\result" + RandomString(10) + objectFile.Info + ".zip";
                     ZipFile.CreateFromDirectory(@"d:\labb\wtmp", zipPath);
                 }
             }
