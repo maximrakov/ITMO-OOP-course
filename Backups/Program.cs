@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Backups.Models;
+﻿using Backups.Models;
 using Backups.Stuff;
 
 namespace Backups
@@ -16,12 +15,6 @@ namespace Backups
             backupJob.MakeRestorePoint();
             backupJob.JobObject.ListFiles.Remove(objectFile1);
             backupJob.MakeRestorePoint();
-            List<RestorePoint> restorePoint = backupJob.RestorePoints;
-            int count = 0;
-            foreach (RestorePoint restore in restorePoint)
-            {
-                count += restore.Storage.ObjectFiles.Count;
-            }
         }
     }
 }
