@@ -8,36 +8,22 @@ namespace Banks.Banks
     public class Bank
     {
         private List<Account> accounts;
-        private List<Customer> customers;
+        private List<ICustomer> customers;
         private List<MoneyTransfer> moneyTransfers;
         public int Limit { get; set; }
         public Bank()
         {
             accounts = new List<Account>();
-            customers = new List<Customer>();
+            customers = new List<ICustomer>();
             moneyTransfers = new List<MoneyTransfer>();
             Limit = 1000;
         }
 
-        public Account AddCreditAccount(int penalty)
+        public Account CreateAccount(string typeOfAcc)
         {
-            Account account = new CreditAccount(penalty);
-            accounts.Add(account);
-            return account;
-        }
-
-        public Account AddDebitAccount(int procent)
-        {
-            Account account = new DebitAccount(procent);
-            accounts.Add(account);
-            return account;
-        }
-
-        public Account AddDepositAccount(int lowProcent, int mediumProcent, int highProcent, int lowBorder, int mediumBorder, int highBorder)
-        {
-            Account account = new DepositAccount(lowProcent, mediumProcent, highProcent, lowBorder, mediumBorder, highBorder);
-            accounts.Add(account);
-            return account;
+            Account newAcc = AccountFactory(typeOfAcc).CreateAccount();
+            accounts.Add(newAcc);
+            return newAcc;
         }
 
         public void ChangeCreditPenalty(int penalty)
@@ -143,7 +129,7 @@ namespace Banks.Banks
             }
         }
 
-        public void AddCustomer(Customer customer)
+        public void AddCustomer(ICustomer customer)
         {
             customers.Add(customer);
         }
@@ -182,6 +168,26 @@ namespace Banks.Banks
                     account.Money += money;
                 }
             }
+        }
+
+        private IAccountFactory AccountFactory(string typeOfAcc)
+        {
+            if (typeOfAcc == "debit")
+            {
+                return new DebitAccountFactory();
+            }
+
+            if (typeOfAcc == "deposit")
+            {
+                return new DepositAccountFactory();
+            }
+
+            if (typeOfAcc == "credit")
+            {
+                return new CreditAccountFactory();
+            }
+
+            return null;
         }
     }
 }
