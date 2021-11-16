@@ -1,13 +1,14 @@
-﻿using Banks.Banks;
+﻿using System;
+using Banks.Banks;
 using Banks.Util;
 
 namespace Banks.BanksStuff
 {
     public class CreditAccount : Account
     {
-        public CreditAccount(int penalty)
+        public CreditAccount()
         {
-            Penalty = penalty;
+            Penalty = 20;
             AccountId = GlobalId + 1;
             GlobalId++;
             Money = 100;

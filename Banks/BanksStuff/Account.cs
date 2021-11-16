@@ -1,4 +1,5 @@
-﻿using Banks.Banks;
+﻿using System;
+using Banks.Banks;
 using Banks.Util;
 
 namespace Banks.BanksStuff
@@ -28,11 +29,7 @@ namespace Banks.BanksStuff
             Money -= amount;
         }
 
-        public virtual void MakeTransfer(int recipientAccountId, int amount)
-        {
-            Bank bank = BankUtils.FindByAccount(recipientAccountId);
-            bank.MoneyTransfer(AccountId, recipientAccountId, amount);
-        }
+        public abstract void MakeTransfer(int recipientAccountId, int amount);
 
         public virtual void CancelTransfer(int recipientAccountId, int amount)
         {
