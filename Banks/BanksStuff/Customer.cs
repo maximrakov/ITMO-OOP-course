@@ -3,40 +3,39 @@ using System.Collections.Generic;
 
 namespace Banks.BanksStuff
 {
-    public class Customer
+    public class Customer : ICustomer
     {
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Address { get; set; }
         public string PassportData { get; set; }
         public bool Notice { get; set; }
-        private List<Account> accounts;
+        public List<Account> Accounts { get; set; }
         public List<string> Messages { get; set; }
+        public Customer()
+        {
+            Accounts = new List<Account>();
+            Messages = new List<string>();
+        }
+
         public Customer(string name, string surname, string address, string passwordData)
         {
             Name = name;
             Surname = surname;
             Address = address;
             PassportData = passwordData;
-            accounts = new List<Account>();
+            Accounts = new List<Account>();
             Messages = new List<string>();
             Notice = false;
         }
 
         public void MakeTransfer(int accountId, int accountToId, int amount)
         {
-            foreach (Account account in accounts)
+            foreach (Account account in Accounts)
             {
                 if (account.AccountId == accountId)
                 {
-                    if ((Address.Length <= 1 || PassportData.Length <= 1) && (account.GetLimit() < amount))
-                    {
-                        Console.WriteLine("Limit is exceeded");
-                    }
-                    else
-                    {
-                        account.MakeTransfer(accountToId, amount);
-                    }
+                    account.MakeTransfer(accountToId, amount);
                 }
             }
         }
@@ -44,7 +43,7 @@ namespace Banks.BanksStuff
         public List<int> GetUserAccounts()
         {
             var vs = new List<int>();
-            foreach (Account account in accounts)
+            foreach (Account account in Accounts)
             {
                 vs.Add(account.AccountId);
             }
@@ -55,7 +54,7 @@ namespace Banks.BanksStuff
         public List<int> GetUserMoney()
         {
             var vs = new List<int>();
-            foreach (Account account in accounts)
+            foreach (Account account in Accounts)
             {
                 vs.Add(account.Money);
             }
@@ -81,12 +80,12 @@ namespace Banks.BanksStuff
 
         public void AddAccount(Account account)
         {
-            accounts.Add(account);
+            Accounts.Add(account);
         }
 
         public void CancelTransfer(int accountId, int accountToId, int amount)
         {
-            foreach (Account account in accounts)
+            foreach (Account account in Accounts)
             {
                 if (account.AccountId == accountId)
                 {
@@ -97,7 +96,7 @@ namespace Banks.BanksStuff
 
         public void AddMoney(int accountId, int amount)
         {
-            foreach (Account account in accounts)
+            foreach (Account account in Accounts)
             {
                 if (account.AccountId == accountId)
                 {
@@ -108,7 +107,7 @@ namespace Banks.BanksStuff
 
         public void TakeMoney(int accountId, int amount)
         {
-            foreach (Account account in accounts)
+            foreach (Account account in Accounts)
             {
                 if (account.AccountId == accountId)
                 {
@@ -117,9 +116,14 @@ namespace Banks.BanksStuff
             }
         }
 
+        public List<Account> GetAccounts()
+        {
+            return Accounts;
+        }
+
         public bool HasThisType(string type)
         {
-            foreach (Account account in accounts)
+            foreach (Account account in Accounts)
             {
                 if (account.Type == type)
                 {
@@ -128,6 +132,31 @@ namespace Banks.BanksStuff
             }
 
             return false;
+        }
+
+        public string GetName()
+        {
+            return Name;
+        }
+
+        public bool GetNotice()
+        {
+            return Notice;
+        }
+
+        public List<string> GetMessages()
+        {
+            return Messages;
+        }
+
+        public void SetPassword(string password)
+        {
+            PassportData = password;
+        }
+
+        public void SetAdress(string adress)
+        {
+            Address = adress;
         }
     }
 }

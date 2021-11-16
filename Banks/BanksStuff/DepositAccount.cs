@@ -1,21 +1,24 @@
 ﻿using System;
+using Banks.Banks;
+using Banks.Util;
 
 namespace Banks.BanksStuff
 {
     public class DepositAccount : Account
     {
-        public DepositAccount(int lowProcent, int mediumProcent, int highProcent, int lowBorder, int mediumBorder, int highBorder)
+        public DepositAccount()
         {
-            LowProcent = lowProcent;
-            MediumProcent = mediumProcent;
-            HightProcent = highProcent;
-            LowBorder = lowBorder;
-            MediumBorder = mediumBorder;
-            HighBorder = highBorder;
+            LowProcent = 10;
+            MediumProcent = 30;
+            HightProcent = 50;
+            LowBorder = 1000;
+            MediumBorder = 5000;
+            HighBorder = 10000;
             AccountId = GlobalId + 1;
             Money = 100;
             GlobalId++;
             Earn = 0;
+            Penalty = 0;
             Type = "deposit";
         }
 
@@ -25,9 +28,14 @@ namespace Banks.BanksStuff
             Earn = 0;
         }
 
+        public override void MakeTransfer(int recipientAccountId, int amount)
+        {
+            Bank bank = BankUtils.FindByAccount(recipientAccountId);
+            bank.MoneyTransfer(AccountId, recipientAccountId, amount);
+        }
+
         public override void AddDought()
         {
-            Console.WriteLine(Money);
             if (Money <= LowBorder)
             {
                 Earn += (Money / 100) * LowProcent;
@@ -46,8 +54,6 @@ namespace Banks.BanksStuff
                     }
                 }
             }
-
-            Console.WriteLine(Earn);
         }
 
         public int Earn { get; set; }
