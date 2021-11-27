@@ -1,5 +1,8 @@
-﻿namespace Backups.Stuff
+﻿using System;
+
+namespace Backups.Stuff
 {
+    [Serializable]
     public class ObjectFile
     {
         public string Info { get; set; }

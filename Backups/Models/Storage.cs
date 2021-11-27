@@ -5,9 +5,10 @@ using Backups.Stuff;
 
 namespace Backups.Models
 {
-    public class Storage
+    [Serializable]
+    public class Storage : IStorage
     {
-        public Storage(List<ObjectFile> objects, string storageWay)
+        public Storage(List<ObjectFile> objects, string storageWay, string storagePath, int number)
         {
             if (objects is null)
             {
@@ -25,11 +26,16 @@ namespace Backups.Models
                 ObjectFiles.Add(objectFile.GetCpy());
             }
 
-            Repository = new Repository(storageWay, objects);
+            Repository = new Repository(storageWay, objects, storagePath, number);
+        }
+
+        public void MakeRestorePoint()
+        {
+            Repository.MakeRestorePoint();
         }
 
         public List<ObjectFile> ObjectFiles { get; set; }
-        public Repository Repository { get; set; }
+        public IRepository Repository { get; set; }
         public string StorageWay { get; set; }
     }
 }

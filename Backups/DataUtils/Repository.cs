@@ -7,12 +7,19 @@ using Backups.Stuff;
 
 namespace Backups.DataUtils
 {
-    public class Repository
+    [Serializable]
+    public class Repository : IRepository
     {
-        public string Way { get; set; }
-        public Repository(string storageWay, List<ObjectFile> objects)
+        public int Number { get; set; }
+        public List<ObjectFile> ObjectFiles { get; set; }
+        public string StoragePath { get; set; }
+        public string StorageWay { get; set; }
+        public string StorageNpth { get; set; }
+        public Repository(string storageWay, List<ObjectFile> objects, string storagePath, int number)
         {
-            Way = @"labb";
+            Number = number;
+            StorageWay = storageWay;
+            StorageNpth = storagePath;
             if (storageWay is null)
             {
                 throw new ArgumentNullException(nameof(storageWay));
@@ -23,33 +30,45 @@ namespace Backups.DataUtils
                 throw new ArgumentNullException(nameof(objects));
             }
 
-            if (storageWay == "single")
+            StoragePath = System.IO.Path.Combine(storagePath, Number.ToString());
+            ObjectFiles = new List<ObjectFile>();
+            foreach (ObjectFile objectFile in objects)
             {
-                using (StreamWriter sw = File.CreateText(@"d:\" + Way + @"\wtmp\tmptxt.txt"))
+                ObjectFiles.Add(objectFile.GetCpy());
+            }
+        }
+
+        public void MakeRestorePoint()
+        {
+            if (StorageWay == "single")
+            {
+                System.IO.Directory.CreateDirectory(System.IO.Path.Combine(StoragePath, "wtmp"));
+                foreach (ObjectFile objectFile in ObjectFiles)
                 {
-                    foreach (ObjectFile objectFile in objects)
-                    {
-                        sw.WriteLine(objectFile.Info);
-                    }
+                    File.Copy(objectFile.Info, System.IO.Path.Combine(System.IO.Path.Combine(StoragePath, "wtmp"), Path.GetFileName(objectFile.Info)));
                 }
 
-                string zipPath = @"d:\labb\res\result" + objects[0].Info + ".zip";
-                ZipFile.CreateFromDirectory(@"d:\labb\wtmp", zipPath);
+                string zipPath = System.IO.Path.Combine(StoragePath, "arc.zip");
+
+                ZipFile.CreateFromDirectory(System.IO.Path.Combine(StoragePath, "wtmp"), zipPath);
             }
 
-            if (storageWay == "split")
+            if (StorageWay == "split")
             {
-                string zipPath = @"d:\" + Way + @"\wtmp\res\result" + objects[0].Info + ".zip";
-                foreach (ObjectFile objectFile in objects)
-                {
-                    using (StreamWriter sw = File.CreateText(@"d:\labb\wtmp\tmptxt.txt"))
-                    {
-                        sw.WriteLine(objectFile.Info);
-                    }
+                System.IO.Directory.CreateDirectory(System.IO.Path.Combine(StoragePath, "wtmp"));
 
-                    zipPath = @"d:\" + Way + @"\res\result" + RandomString(10) + objectFile.Info + ".zip";
-                    ZipFile.CreateFromDirectory(@"d:\labb\wtmp", zipPath);
+                string zipPath;
+                int numb = 0;
+                foreach (ObjectFile objectFile in ObjectFiles)
+                {
+                    File.Copy(objectFile.Info, System.IO.Path.Combine(System.IO.Path.Combine(StoragePath, "wtmp"), Path.GetFileName(objectFile.Info)));
+                    numb++;
+                    zipPath = System.IO.Path.Combine(StoragePath, "arc" + numb.ToString() + ".zip");
+                    ZipFile.CreateFromDirectory(System.IO.Path.Combine(StoragePath, "wtmp"), zipPath);
+                    File.Delete(System.IO.Path.Combine(System.IO.Path.Combine(StoragePath, "wtmp"), Path.GetFileName(objectFile.Info)));
                 }
+
+                Directory.Delete(System.IO.Path.Combine(StoragePath, "wtmp"));
             }
         }
 
