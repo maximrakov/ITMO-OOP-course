@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Backups.Stuff;
 
 namespace Backups.Models
 {
+    [Serializable]
     public class JobObject
     {
         public List<ObjectFile> ListFiles { get; set; }
